@@ -1,0 +1,24 @@
+<!-- display if user isn't subscribed to create projects -->
+{% import "subscribebase.html" as sub %}
+{% block body %}
+
+<div class="container-flex">
+    <center>
+        <div class="ext-box">
+            <div class="int-box">
+                    <center>
+
+                        {{ sub.render_subscribe_status(user, show_bt=True) }}
+
+                    </center>
+            </div>
+        </div>
+    </center>
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+
+{% endblock %}

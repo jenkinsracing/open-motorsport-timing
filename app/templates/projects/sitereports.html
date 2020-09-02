@@ -1,0 +1,63 @@
+<!-- overview of project site reports go here -->
+{% block body %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12" align="center">
+            <div class="jumbotron hjumbotron">
+                <br>
+                <h1>{{ pname }}</h1>
+                <h2>Site Reports</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12" align="center">
+                      <!-- reports bootstrap table -->
+                      <div id="toolbar"><button class="btn btn-primary" type="button" onclick="newSiteReport()">New Site Report</button></div>
+                      <div class="tcontainer">
+                          <table id="sitereportsTable"
+                                 data-toggle="table"
+                                 data-toolbar="#toolbar"
+                                 data-pagination="true"
+                                 data-show-pagination-switch="true"
+                                 data-page-size="10"
+                                 data-page-list="[10, 20, 50]"
+                                 data-search="false"
+                                 data-show-refresh="false"
+                                 data-show-toggle="false"
+                                 data-show-columns="true"
+                                 data-show-export="false"
+                                 data-detail-view="false"
+                                 data-mobile-responsive="true"
+                                 data-check-on-init="true"
+                                 data-cookie="true"
+                                 data-cookie-expire="3d"
+                                 data-cookie-id-table="idSiteReports"
+                                 data-url="{{ pid }}/api/sitereports/">
+                              <thead>
+                                  <tr>
+                                      <th data-field="id">ID</th>
+                                      <th data-field="userstamp">User Name</th>
+                                      <th data-field="cstamp">Created</th>
+                                      <th data-field="tstamp">Updated</th>
+                                  </tr>
+                              </thead>
+                          </table>
+                      </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+
+<script> var pid = {{ pid }}</script>
+
+{% assets "sitereports_js" %}
+<script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% macro render_subscribe_status(user, show_bt=False) %}
+
+    <div class="well">
+
+    {% if user.subscription %}
+
+        <div>
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+        </div>
+        <div>Your current subscription allows for {{ user.subscription.project_limit }} active project(s). To change your plan, upgrade or downgrade your subscription by choosing another plan.</div>
+
+    {% else %}
+
+        <div>
+            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+        </div>
+        <div>Currently you are only a viewer or contributor to projects owned by another user. To start commissioning your own projects you must subscribe to a plan.</div>
+
+    {% endif %}
+
+    {% if show_bt %}
+        <div>
+            <a href="{{ url_for('main.user') }}"><button class="btn btn-primary" type="button">Goto My Account</button></a>
+        </div>
+
+    {% endif %}
+
+    </div>
+
+{% endmacro %}

@@ -1,0 +1,235 @@
+{% import "subscribebase.html" as sub %}
+{% import "invoicesbase.html" as inv %}
+{% extends "base.html" %}
+
+{% block title %}Commissioning.IO - My Account{% endblock %}
+
+{% block body %}
+    <div class="margincontent">
+        <div class="row">
+            <div class="col-md-12" align="center">
+                <div class="jumbotron">
+                    <h1>My Account</h1><br>
+                </div>
+                <div>
+                    <h2><span class="label label-default full-width">Details</span></h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">User Details</div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4 col-xs-12 col-sm-6 col-lg-4">
+                                <img alt="User Pic" src="https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg" id="profile-image1" class="img-circle img-responsive">
+                            </div>
+                            <div class="col-md-8 col-xs-12 col-sm-6 col-lg-8" >
+                                <div>
+                                    <h2>{{ user.user_details.first_name }} {{ user.user_details.last_name }}</h2>
+                                    <p><b>{{ user.user_details.job_title }}</b></p>
+                                </div>
+                                <hr>
+                                <ul>
+                                    <li><p>Username: {{ user.username }}</p></li>
+                                    <li><p>Email: {{ user.email }}</p></li>
+                                </ul>
+                                <hr>
+                                <div class="col-sm-5 col-xs-6 title">Join Date: {{ user.tstamp }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Subscription Details</div>
+                    <div class="panel-body">
+                        {% if user.subscription %}
+                        <div>
+                            <h2>{{ user.subscription.stripe_plan_name }}</h2>
+                        </div>
+                        <hr>
+                        <ul>
+                            <li><p>Active: {{ user.subscription.active }}</p></li>
+                            {% if user.subscription.trial_active %}
+                            <li><p><strong>Trial Ends: {{ user.subscription.trial_expiration }}</strong></p></li>
+                                {% if user.subscription.trial_ending %}
+                                <li><p><strong>Your trial will end soon and regular monthly payments will begin!</strong></p></li>
+                                {% endif %}
+                            {% else %}
+                            <li><p>Ends: {{ user.subscription.expiration }}</p></li>
+                            {% endif %}
+                        </ul>
+                        <hr>
+                            {% if user.subscription.stripe_cancel_at_period_end %}
+                            <p>Access to projects associated with this account will be disabled at the end of this period.</p>
+                            <form action="{{ url_for('main.reactivate') }}" method="POST">
+                                <button class="btn btn-success" type="submit">Reactivate Subscription</button>
+                            </form>
+                            {% else %}
+                            <p>Stop monthly renewal for Commissioning.IO projects.</p>
+                            <form action="{{ url_for('main.cancel') }}" method="POST">
+                                <button class="btn btn-danger" type="submit">Cancel Subscription</button>
+                            </form>
+                            {% endif %}
+                        {% else %}
+                        <div class="container-flex">
+                            <center>
+                                <div class="ext-box-short">
+                                    <div class="int-box">
+                                        <div class="well">
+                                            <center>
+                                                <div>
+                                                    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                                                </div>
+                                                <div>No active subscription found.</div>
+                                            </center>
+                                        </div>
+                                    </div>
+                                </div>
+                            </center>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12" align="center">
+                <div>
+                    <h2><span class="label label-default full-width">Subscription</span></h2>
+                </div>
+
+                {{ sub.render_subscribe_status(user) }}
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">Available Subscriptions</div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <p><b>Every subscription to Commissionioning.IO includes all available features. This includes:</b></p>
+                            <p>Unlimited number of devices and IO points.</p>
+                            <p>Unlimited sharing of a project with other users.</p>
+                            <p>Live statistics, charts and site reports.</p>
+                            <p>Archive projects and restore them later.</p>
+                            <hr width="95%">
+                        </div>
+                        <div class="row">
+                            <!-- single project sub -->
+                            <div class="col-md-3">
+                                <div class="thumbnail">
+                                    <div class="caption">
+                                        <h3>Single Project Subscription</h3>
+                                        <p>Commission a single active project online for <b>$10.00/Month</b>.</p>
+                                        {% if user.subscription.stripe_plan_id == "1001" %}
+                                        <button type="button" class="btn btn-default" disabled="disabled">Active</button>
+                                        {% else %}
+                                            {% if project_count > 1 %}
+                                            <button type="button" class="btn btn-default" disabled="disabled">To Many Active Projects</button>
+                                            {% else %}
+                                            <form action="{{ url_for('main.subscribe', plan='1001') }}" method="POST">
+                                              <script
+                                                src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                                data-key="{{stripe_pk}}"
+                                                data-name="Commissioning.IO"
+                                                data-description="Subscription for 1 Active Project"
+                                                data-email="{{user.email}}"
+                                                data-amount="1000"
+                                                data-allow-remember-me="false"
+                                                data-label="Subscribe for Single Project">
+                                              </script>
+                                            </form>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 3 project sub -->
+                            <div class="col-md-3">
+                                <div class="thumbnail">
+                                    <div class="caption">
+                                        <h3>Three Project Subscription</h3>
+                                        <p>Commission up to three active projects online for <b>$15.00/Month</b>.</p>
+                                        {% if user.subscription.stripe_plan_id == "1003" %}
+                                        <button type="button" class="btn btn-default" disabled="disabled">Active</button>
+                                        {% else %}
+                                            {% if project_count > 3 %}
+                                            <button type="button" class="btn btn-default" disabled="disabled">To Many Active Projects</button>
+                                            {% else %}
+                                            <form action="{{ url_for('main.subscribe', plan='1003') }}" method="POST">
+                                              <script
+                                                src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                                data-key="{{stripe_pk}}"
+                                                data-name="Commissioning.IO"
+                                                data-description="Subscription for 3 Active Projects"
+                                                data-email="{{user.email}}"
+                                                data-amount="1500"
+                                                data-allow-remember-me="false"
+                                                data-label="Subscribe for Three Projects">
+                                              </script>
+                                            </form>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 10 project sub -->
+                            <div class="col-md-3">
+                                <div class="thumbnail">
+                                    <div class="caption">
+                                        <h3>Ten Project Subscription</h3>
+                                        <p>Commission up to ten active projects online <b>$20.00/Month</b>.</p>
+                                        {% if user.subscription.stripe_plan_id == "1010" %}
+                                        <button type="button" class="btn btn-default" disabled="disabled">Active</button>
+                                        {% else %}
+                                            {% if project_count > 10 %}
+                                            <button type="button" class="btn btn-default" disabled="disabled">To Many Active Projects</button>
+                                            {% else %}
+                                            <form action="{{ url_for('main.subscribe', plan='1010') }}" method="POST">
+                                              <script
+                                                src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                                data-key="{{stripe_pk}}"
+                                                data-name="Commissioning.IO"
+                                                data-description="Subscription for 10 Active Projects"
+                                                data-email="{{user.email}}"
+                                                data-amount="2000"
+                                                data-allow-remember-me="false"
+                                                data-label="Subscribe for Ten Projects">
+                                              </script>
+                                            </form>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- custom project sub -->
+                            <div class="col-md-3">
+                                <div class="thumbnail">
+                                    <div class="caption">
+                                        <h3>Custom Project Subscription</h3>
+                                        <p>If more than 10 active projects are required please contact us.</p>
+                                        <div class="well"><a href="mailto:splitrocksoftwarellc@gmail.com">Contact Us</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" align="center">
+                <div>
+                    <h2><span class="label label-default full-width">Invoices</span></h2>
+                </div>
+                {{ inv.render_invoice_upcoming(user_upcoming_invoice) }}
+                {{ inv.render_invoices_table(user_invoices) }}
+            </div>
+        </div>
+    </div>
+<div>
+    <br><br><br><center><p>&copy; 2018 Split Rock Software LLC</p></center>
+</div>
+{% endblock %}

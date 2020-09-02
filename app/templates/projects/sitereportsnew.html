@@ -1,0 +1,82 @@
+<!-- view to create a new site report -->
+{% import "projects/_macros.html" as macros %}
+{% block body %}
+
+<!-- TODO currently this report creator is very basic, add more features; such as a "template chooser" in case user
+    TODO wants to make a report organized by process line, panel, some other criteria, or just get a blank report -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12" align="center">
+            <div class="panel panel-default">
+                <div class="panel-heading">New Site Report for {{ pname }}</div>
+                <div class="panel-body">
+                    <div class="click2edit" id="editor">
+
+                        <!-- TODO temporary site report template hard coded until template system is completed -->
+                        <div style="text-align: left;"><h1 style="text-align: left; "><b>Site Report</b></h1><p style="text-align: left;"><br></p></div><table class="table table-bordered"><tbody><tr><td><h3 style="font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; color: rgb(0, 0, 0);">Buhler Representative</h3><h4 style="font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; color: rgb(0, 0, 0);"><p></p></h4><h4>Name:<br>Email:<br>Phone:</h4><p></p></td><td><h3 style="font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; color: rgb(0, 0, 0);">Customer Representative</h3><h4 style="font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; color: rgb(0, 0, 0);"><p></p></h4><h4>Name:<br>Email:<br>Phone:</h4><p></p></td></tr></tbody></table><div style="text-align: left;"><h4 style="text-align: left; "><p><h3>Project: {{ pname }}</h3><p><br></p></p></h4></div><table class="table table-bordered"><tbody><tr><td><h4>Item</h4></td><td><h4>Notes</h4></td><td><h4>Responsible</h4></td><td><h4>Date</h4></td></tr><tr><td>1.</td><td><br></td><td><br></td><td><br></td></tr><tr><td>2.</td><td><br></td><td><br></td><td><br></td></tr><tr><td>3.</td><td><br></td><td><br></td><td><br></td></tr><tr><td>4.</td><td><br></td><td><br></td><td><br></td></tr></tbody></table><div style="text-align: left;"><h4 style="text-align: left; "><p></p></h4><h3 style="font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; color: rgb(0, 0, 0);">Summary:</h3><p style="font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; color: rgb(0, 0, 0);">[Summarize the report items]</p></div>
+                        <!-- TODO temporary site report template hard coded until template system is completed -->
+
+                    </div>
+                </div>
+            </div>
+            <p>
+                <button id="save" class="btn btn-primary" onclick="save()">Save</button>
+                <button id="cancel" class="btn btn-primary" onclick="cancel()">Cancel</button>
+            </p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+
+<script> var pid = {{ pid }}</script>
+<script>
+
+  var save = function() {
+
+  var myHtml = $('.click2edit').summernote('code');
+  myHtml = myHtml.replace(/\n/g, "").trim().replace(/\>[\t ]+\</g, "><");
+
+  var data = {
+            html : myHtml
+            }
+
+  $.post(pid + '/api/sitereports/', data, function (res) {
+        console.log(res)
+        // reset the modal input and token input
+        $('.click2edit').summernote('destroy');
+        gotoSiteReports();
+
+
+    }).fail(function(err, status) {
+        // something went wrong
+        console.log('AJAX post failed');
+    });
+
+
+  };
+
+var cancel = function() {
+    gotoSiteReports();
+    };
+
+
+function gotoSiteReports() {
+// TODO need this to know if we came from site report list or dashboard (maybe just call browser back?)
+    $.ajax(pid + '/sitereports/').done(function (res) {
+            $('#cont-area').html(res);
+    });
+}
+
+  $(document).ready(function () {
+  $('.click2edit').summernote({focus: true});
+
+});
+
+</script>
+
+
+{% endblock %}

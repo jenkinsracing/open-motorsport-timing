@@ -1,0 +1,101 @@
+{% extends "projects/tablebase.html" %}
+
+{% block header_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4" align="center">
+            <div class="jumbotron hjumbotron">
+                <br>
+                <h1>{{ pname }}</h1>
+                <h2>Input / Output Checklist</h2>
+            </div>
+        </div>
+        <div class="col-md-4" align="center">
+            <div class="jumbotron hjumbotron">
+                <br>
+                <h1>Stats</h1>
+                <h2>Technical Details</h2>
+            </div>
+        </div>
+        <div class="col-md-4" align="center">
+            <div class="jumbotron hjumbotron">
+                <br>
+                <div id="canvas-holder" style="width:100%">
+                    <canvas id="ios-chart-area"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block table_content %}
+
+<div id="toolbar"><button class="btn btn-primary" type="button" onclick="newIOItem()">New IO</button></div>
+
+<div class="tcontainer">
+    <table id="table"
+           data-toggle="table"
+           data-toolbar="#toolbar"
+           data-id-field="id"
+           data-unique-id="id"
+           data-filter-control="true"
+           data-filter-show-clear="true"
+           data-pagination="true"
+           data-show-pagination-switch="true"
+           data-page-size="20"
+           data-page-list="[20, 50, 100]"
+           data-search="true"
+           data-show-refresh="true"
+           data-show-toggle="true"
+           data-show-columns="true"
+           data-show-export="true"
+           data-detail-view="true"
+           data-mobile-responsive="true"
+           data-check-on-init="true"
+           data-cookie="true"
+           data-cookie-expire="3d"
+           data-cookie-id-table="idIos"
+           data-row-style="rowStyle"
+           data-url="{{ pid }}/api/ios/">
+        <thead>
+    <tr>
+        <th data-field="hasiolog" data-sortable="true" data-formatter="haslogFormatter">Log</th>
+        <th data-field="id" data-sortable="true">ID</th>
+        <th data-field="device" data-sortable="true" data-filter-control="input">Device</th>
+        <th data-field="alias" data-sortable="true" data-filter-control="input">Alias</th>
+        <th data-field="address" data-sortable="true" data-filter-control="input">Address</th>
+        <th data-field="description" data-sortable="true" data-filter-control="input">Description</th>
+        <th data-field="process" data-sortable="true" data-filter-control="input">Process</th>
+        <th data-field="location" data-sortable="true" data-filter-control="select">Location</th>
+        <th data-field="panel" data-sortable="true" data-filter-control="select">Panel</th>
+        <th data-field="userstamp" data-align="center" data-sortable="true">User</th>
+        <th data-field="tstamp" data-align="center" data-sortable="true">Time</th>
+        <th data-field="status" data-align="center" data-sortable="true" data-filter-control="select">Status</th>
+        <th data-field="scontrol" data-align="center" data-sortable="false" data-events="scontrolEvents" data-formatter="scontrolFormatter">Controls</th>
+    </tr>
+    </thead>
+    </table>
+</div>
+{% endblock %}
+
+{% block js %}
+
+<script>
+var pid = {{ pid }}
+var tags = [
+            {% for tag in tags %}
+                { value: "{{ tag.id }}", label: "{{ tag.term }}" },
+            {% endfor %}
+            ]
+</script>
+
+{% assets "ios_pie_js" %}
+<script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+
+{% assets "ios_js" %}
+<script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Commissioning.IO - Home{% endblock %}
+
+{% block body %}
+    <div class="margincontent">
+    <div class="jumbotron">
+        <h1>Commissioning.IO</h1>
+        <p>The industrial check list tool</p>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <h1>Features</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Import</h3>
+            <p>Import device lists, IO lists, and PLC tag exports to turn them into commissioning checklists for your project.</p>
+        </div>
+
+        <div class="col-md-4">
+            <h3>Shareable</h3>
+            <p>Share your commissioning check list with other engineers or the project manager so everyone is up to date. No more emailing spreadsheets everyday.</p>
+        </div>
+
+        <div class="col-md-4">
+            <h3>Overview</h3>
+            <p>Quickly flip between multiple commissioning projects to stay on top progress.</p>
+        </div>
+    </div>
+        </div>
+<div>
+
+        <br><br><br><br><center><p>&copy; 2018 Split Rock Software LLC<br><a href="{{ url_for('.terms') }}">Terms</a> and <a href="{{ url_for('.privacy') }}">Privacy Policy</a></p></center>
+            </div>
+
+{% endblock %}

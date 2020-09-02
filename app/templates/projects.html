@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Projects{% endblock %}
+
+{% block body %}
+
+<div class="wrapper">
+    <!--/ START OF SIDEBAR -->
+    <nav id="sidebar">
+
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+            <h3>Projects&emsp;&emsp;<a href="#" onclick="newProject()">+</a></h3>
+        </div>
+
+        <!-- Sidebar Links -->
+        <ul class="list-unstyled components" id="projectlist">
+            {% for id, name in pids.items() %}
+                <li>
+                    <a class="barlink" href="#pageSubmenu{{ id }}" data-toggle="collapse" aria-expanded="false">{{ name }}</a>
+                    <ul class="collapse list-unstyled" id="pageSubmenu{{ id }}">
+                        <li><a class="barlink" href="#" onclick="selectDashboard({{ id }})">Dashboard</a></li>
+                        <li><a class="barlink" href="#" onclick="selectDevices({{ id }})">Device List</a></li>
+                        <li><a class="barlink" href="#" onclick="selectIOs({{ id }})">IO List</a></li>
+                        <li><a class="barlink" href="#" onclick="selectSiteReports({{ id }})">Site Reports</a></li>
+
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+
+    </nav>
+    <!--/ END OF SIDEBAR -->
+
+
+    <div id="iolistcontent">
+        <button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn">
+            <i class="glyphicon glyphicon-align-left"></i>
+            Project Menu
+        </button>
+
+        <!--/ START OF DYNAMIC VIEW -->
+        <div id="cont-area">
+            <div class="container-flex">
+            <center>
+                <div class="ext-box">
+                    <div class="int-box">
+                        <div class="well">
+                            <center>
+                                {% if pids %}
+                                <div>
+                                    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                                </div>
+                                <div>Select a project from the menu.</div>
+                                {% else %}
+                                <div>
+                                    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                                </div>
+                                <div>No projects have been shared with you yet.</div>
+                                {% endif %}
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </center>
+            </div>
+        </div>
+        <!--/ END OF DYNAMIC VIEW -->
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
+<script>
+
+function newProject() {
+    $.ajax('new').done(function (res) {
+            $('#cont-area').html(res);
+    });
+    };
+
+function selectDashboard(id) {
+    $.ajax(id + '/dashboard/').done(function (res) {
+            $('#cont-area').html(res);
+    });
+    };
+
+function selectDevices(id) {
+    $.ajax(id + '/devices').done(function (res) {
+            $('#cont-area').html(res);
+    });
+    };
+
+function selectIOs(id) {
+    $.ajax(id + '/ios/').done(function (res) {
+            $('#cont-area').html(res);
+    });
+    };
+
+function selectSiteReports(id) {
+    $.ajax(id + '/sitereports/').done(function (res) {
+            $('#cont-area').html(res);
+    });
+    };
+
+$(document).ready(function () {
+
+    $('#sidebar').niceScroll({
+        cursorcolor: '#53619d', // Changing the scrollbar color
+        cursorwidth: 4, // Changing the scrollbar width
+        cursorborder: 'none', // Rempving the scrollbar border
+    });
+
+    $('#sidebarCollapse').on('click', function () {
+        // open or close navbar AND SHIFT CONTENT!!!!
+        $('#sidebar, #iolistcontent').toggleClass('active');
+        // close dropdowns
+        $('.collapse.in').toggleClass('in');
+        // and also adjust aria-expanded attributes we use for the open/closed arrows
+        // in our CSS
+        $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+    });
+
+});
+
+</script>
+
+{% endblock %}

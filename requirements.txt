@@ -1,0 +1,29 @@
+Flask==0.12
+
+# Flask Extensions
+Flask-Assets==0.12
+Flask-Cache==0.13.1
+Flask-DebugToolbar==0.10.0
+Flask-Login==0.4.0
+Flask-Script==2.0.5
+Flask-SQLAlchemy==2.1
+Flask-WTF==0.14
+# Flask-SSLify==0.1.5 app factories not merged to package
+Flask-Principal==0.4.0
+
+# Other
+itsdangerous==0.24
+cssmin==0.2.0
+jsmin==2.2.1
+flask-jsontools==0.1.1post0
+marshmallow==2.14.0
+marshmallow-sqlalchemy==0.13.2
+flask-marshmallow==0.8.0
+sqlalchemy-utils==0.32.19
+stripe==1.75.3
+
+# Testing
+pytest==3.0.5
+pytest-cov==2.4.0
+mccabe==0.3
+flake8==2.4.0

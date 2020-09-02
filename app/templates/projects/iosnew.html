@@ -1,0 +1,98 @@
+<!-- view to create a new site report -->
+
+{% block body %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">New IO for {{ pname }}</div>
+                <div class="panel-body">
+                    <form id="addIOForm" role="form">
+                        <div class="form-group">
+                            <label for="device">Device</label>
+                            <input class="form-control" id="device" name="device" placeholder="Device" type="text" value="">
+                        </div>
+                        <div class="form-group">
+                            <label for="alias">Alias</label>
+                            <input class="form-control" id="alias" name="alias" placeholder="Alias" type="text" value="">
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <input class="form-control" id="address" name="address" placeholder="Address" type="text" value="">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <input class="form-control" id="description" name="description" placeholder="Description" type="text" value="">
+                        </div>
+                        <div class="form-group">
+                            <label for="process">Process</label>
+                            <input class="form-control" id="process" name="process" placeholder="Process" type="text" value="">
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Location</label>
+                            <input class="form-control" id="location" name="location" placeholder="location" type="text" value="">
+                        </div>
+                        <div class="form-group">
+                            <label for="panel">Panel</label>
+                            <input class="form-control" id="panel" name="panel" placeholder="Panel" type="text" value="">
+                        </div>
+                        <button class="btn btn-primary" type="submit">Save</button>
+                        <button type="button" id="cancelButton" class="btn btn-primary" onclick="cancel()">Cancel</button>
+                        <div class="help-block" id="addIOHelpBlock"></div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+
+<script> var pid = {{ pid }}</script>
+
+<script>
+$("#addIOForm").submit(function(e) {
+    var data = $("#addIOForm").serialize();
+
+    $.post(pid + '/api/ios/', data, function (res) {
+            console.log(res)
+            // reset form
+
+            //feedback
+            $('#addIOHelpBlock').text(res.responseJSON);
+            gotoIOs();
+
+
+        }).fail(function(err, status) {
+            // something went wrong
+
+            //feedback
+            $('#addIOHelpBlock').text(err.responseJSON);
+
+            console.log('AJAX post to add IO failed');
+        });
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+
+function cancel(){
+    gotoIOs();
+    };
+
+
+function gotoIOs() {
+// TODO need this to know if we came from site report list or dashboard (maybe just call browser back?)
+    $.ajax(pid + '/ios/').done(function (res) {
+            $('#cont-area').html(res);
+    });
+}
+
+
+</script>
+{% endblock %}

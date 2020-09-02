@@ -1,0 +1,71 @@
+{% macro render_tag_tab(id, tag) %}
+    <li><a data-toggle="tab" href="#{{ tag.term }}-{{ id }}">{{ tag.term }}</a></li>
+{% endmacro %}
+
+{% macro render_tag_content(id, tag, logs, item_type) %}
+    {% if tag == 'Untagged' %}
+        <div id="{{ tag }}-{{ id }}" class="tab-pane fade in active" style="text-align:left; padding:10px">
+    {% else %}
+        <div id="{{ tag }}-{{ id }}" class="tab-pane fade" style="text-align:left; padding:10px">
+    {% endif %}
+        <table class="table table-condensed table-hover table-responsive">
+            <thead>
+            <tr>
+                <th>Device</th>
+                <th>Address</th>
+                <th>Description</th>
+                <th>Log Message</th>
+                <th>User</th>
+                <th>Timestamp</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                    <tr>
+                        {% if item_type == "device_items" %}
+                        <td>{{ log.device_item.device }}</td>
+                        <td>{{ log.device_item.address }}</td>
+                        <td>{{ log.device_item.description }}</td>
+                        <td>{{ log.logmsg }}</td>
+                        <td>{{ log.user }}</td>
+                        <td>{{ log.tstamp }}</td>
+                        {% else %}
+                        <td>{{ log.io_item.device }}</td>
+                        <td>{{ log.io_item.address }}</td>
+                        <td>{{ log.io_item.description }}</td>
+                        <td>{{ log.logmsg }}</td>
+                        <td>{{ log.user }}</td>
+                        <td>{{ log.tstamp }}</td>
+                        {% endif %}
+                    </tr>
+                {% else %}
+                <tr><td colspan="6"><h5>There are no logs with this tag.</h5></td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endmacro %}
+
+
+{% macro render_tag_header(tag) %}
+    <h5>{{ tag.term }}</h5>
+{% endmacro %}
+
+{% macro render_tag_table(logs) %}
+    <table border="1px" cellpadding="5px">
+    <tbody>
+    {% for log in logs %}
+    <tr>
+        <td>{{ log.logmsg }}</td>
+        <td>{{ log.user }}</td>
+        <td>{{ log.tstamp }}</td>
+    </tr>
+    {% else %}
+    <!-- do not render anything -->
+    {% endfor %}
+
+    </tbody>
+    </table>
+    <br>
+
+{% endmacro %}

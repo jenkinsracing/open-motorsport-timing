@@ -1,0 +1,439 @@
+{% import "projects/_macros.html" as macros %}
+{% block body %}
+
+<!-- Devices dashboard content -->
+<div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12" align="center">
+                    <div class="jumbotron">
+                        <h1>{{ pname }}</h1><br>
+                        <h2>Project Dashboard</h2>
+                    </div>
+                    <div>
+                        <h2><span class="label label-default full-width">Devices</span></h2>
+                    </div>
+                </div>
+            </div>
+
+            {% if is_owner %}
+            <!-- render devices upload control if a project owner is logged in -->
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <input type="text" class="form-control" readonly> <!-- the visible input field -->
+                        <label class="input-group-btn">
+                            <span class="btn btn-default">Browse&hellip;<input type="file" id="devicesFile" style="display: none;"></span> <!-- browse button for hidden input field -->
+                            <button class="btn btn-primary" type="button" onclick="fileUpload('devices')">Import Devices</button>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <a class="btn btn-secondary" href="{{ url_for('static', filename='files/devices-template.csv') }}">Get Devices Import Template</a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="help-block" id="devicesHelpBlock"></div>
+                </div>
+            </div>
+
+            {% endif %}
+
+            <br>
+            {% if not has_devices %}
+            <!-- if project has no devices don't show all the stats displays -->
+            <div class="row">
+                <div class="col-md-12" align="center">
+                    <div class="jumbotron">
+                        <h2>This project doesn't have any devices.</h2>
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+
+            <div class="row">
+                <div class="col-md-6" align="center">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Statistics</div>
+                        <div class="panel-body">
+                            <h2>{{ devices_stats.devicetotal }} devices are being tracked.</h2><br>
+                            <h2>{{ devices_stats.devicenonepct|round(1) }}% have no updates.</h2><br>
+                            <h2><b>{{ devices_stats.devicereadypct|round(1) }}% are ready for IO check.</b></h2><br>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" align="center">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Progress</div>
+                        <div class="panel-body">
+                                <div id="canvas-holder1" style="width:90%">
+                                    <canvas id="devices-chart-area" />
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Devices activity chart view -->
+            <div class="row">
+                <div class="col-md-12" align="center">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Activity</div>
+                        <div class="panel-body">
+                            <div id="canvas-holder4" style="width:100%; height:300px">
+                                <canvas id="devices-activity-chart-area" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- Devices recent log view -->
+            <div class="row">
+                <div class="col-md-12" align="center">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Recent Logs</div>
+                        <div class="panel-body">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a data-toggle="tab" href="#Untagged-1">Untagged</a></li>
+                                {% for tag in tags %}
+                                    {{ macros.render_tag_tab(1, tag) }}
+                                {% endfor %}
+                            </ul>
+
+                            <div class="tab-content">
+                                {% for tag, logs in devices_t_logs.items() %}
+                                    {{ macros.render_tag_content(1, tag, logs, "device_items") }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+
+<!-- IOs dashboard content -->
+<div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12" align="center">
+                    <div>
+                        <h2><span class="label label-default full-width">Inputs and Outputs</span></h2>
+                    </div>
+                </div>
+            </div>
+
+            {% if is_owner %}
+            <!-- render IOs upload control if a project owner is logged in -->
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <input type="text" class="form-control" readonly> <!-- the visible input field -->
+                        <label class="input-group-btn">
+                            <span class="btn btn-default">Browse&hellip;<input type="file" id="iosFile" style="display: none;"></span> <!-- browse button for hidden input field -->
+                            <button class="btn btn-primary" type="button" onclick="fileUpload('ios')">Import IOs</button>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <a class="btn btn-secondary" href="{{ url_for('static', filename='files/ios-template.csv') }}">Get IOs Import Template</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="help-block" id="iosHelpBlock"></div>
+                </div>
+            </div>
+            {% endif %}
+
+            <br>
+
+            {% if not has_ios %}
+            <!-- if project has no ios don't show all the stats displays -->
+            <div class="row">
+                <div class="col-md-12" align="center">
+                    <div class="jumbotron">
+                        <h2>This project doesn't have any IOs.</h2>
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+
+            <div class="row">
+                <div class="col-md-6" align="center">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Statistics</div>
+                        <div class="panel-body">
+                            <p>
+                            <h2>{{ ios_stats.iototal}} IOs are being tracked.</h2>
+                            <h2>{{ ios_stats.iountestedpct|round(1) }}% are untested.</h2>
+                            <h2>{{ ios_stats.iorepeatpct|round(1) }}% have a problem.</h2>
+                            <h2>{{ ios_stats.iodonepct|round(1) }}% are done.</h2>
+                            <h2><b>{{ (ios_stats.iodonepct + ios_stats.ioremovedpct)|round(1) }}% overall completion.</b></h2>
+                            <br>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-6" align="center">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Progress</div>
+                        <div class="panel-body">
+                            <div id="canvas-holder2" style="width:92%">
+                                <canvas id="ios-chart-area" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- IOs activity chart view -->
+            <div class="row">
+                <div class="col-md-12" align="center">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Activity</div>
+                        <div class="panel-body">
+                            <div id="canvas-holder3" style="width:100%; height:300px">
+                                <canvas id="ios-activity-chart-area" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- IOs recent log view -->
+            <div class="row">
+                <div class="col-md-12" align="center">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Recent Logs</div>
+                        <div class="panel-body">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a data-toggle="tab" href="#Untagged-2">Untagged</a></li>
+                                {% for tag in tags %}
+                                    {{ macros.render_tag_tab(2, tag) }}
+                                {% endfor %}
+                            </ul>
+
+                            <div class="tab-content">
+                                {% for tag, logs in ios_t_logs.items() %}
+                                    {{ macros.render_tag_content(2, tag, logs, "io_items") }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+</div>
+
+
+<!-- Site report dashboard content -->
+<div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12" align="center">
+                    <div>
+                        <h2><span class="label label-default full-width">Site Reports</span></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    <div><button class="btn btn-primary" type="button" onclick="newSiteReport()">New Site Report</button></div>
+                </div>
+            </div>
+            <br>
+
+            {% if not has_sitereports %}
+            <div class="row">
+                <div class="col-md-12" align="center">
+                    <div class="jumbotron">
+                        <h2>This project doesn't have any site reports.</h2><br>
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+
+            <div class="row">
+                <div class="col-md-12" align="center">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Report List</div>
+                        <div class="panel-body">
+                            <!-- users bootstrap table -->
+                            <div class="tcontainer">
+                                <table id="sitereportsTable"
+                                       data-toggle="table"
+                                       data-toolbar="#toolbar"
+                                       data-pagination="true"
+                                       data-show-pagination-switch="true"
+                                       data-page-size="10"
+                                       data-page-list="[10, 20, 50]"
+                                       data-search="false"
+                                       data-show-refresh="false"
+                                       data-show-toggle="false"
+                                       data-show-columns="true"
+                                       data-show-export="false"
+                                       data-detail-view="false"
+                                       data-mobile-responsive="true"
+                                       data-check-on-init="true"
+                                       data-url="{{ pid }}/api/sitereports/">
+                                    <thead>
+                                        <tr>
+                                            <th data-field="id">ID</th>
+                                            <th data-field="userstamp">User Name</th>
+                                            <th data-field="cstamp">Created</th>
+                                            <th data-field="tstamp">Updated</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+</div>
+
+<!-- Users dashboard content -->
+<div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12" align="center">
+                    <div>
+                        <h2><span class="label label-default full-width">Users</span></h2>
+                    </div>
+                </div>
+            </div>
+
+            {% if is_owner %}
+            <!-- render add user control if a project owner is logged in -->
+            <div class="row">
+                <div class="col-md-5">
+                    <form id="addUserForm" role="form">
+                        <div class="input-group">
+                        <input type="text" class="form-control" id="user-email-input" name="user_email" placeholder="User's email">
+                            <span class="input-group-btn">
+
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span id="role-dropdown-display">Viewer</span>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" id="role-dropdown-menu">
+                                    <li><a href="#">Viewer</a></li>
+                                    <li><a href="#">Contributor</a></li>
+                                    <li><a href="#">Owner</a></li>
+                                </ul>
+                                <input type="hidden" id="role-dropdown-input" name="role" value="Viewer">
+
+                                <button class="btn btn-primary" type="submit">Share Project</button>
+                            </span>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="help-block" id="addUserHelpBlock"></div>
+                </div>
+            </div>
+            {% endif %}
+
+            <br>
+            <div class="row">
+                <div class="col-md-12" align="center">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Share List</div>
+                        <div class="panel-body">
+                            <!-- users bootstrap table -->
+                            <div class="tcontainer">
+                                <table id="usersTable"
+                                       data-toggle="table"
+                                       data-toolbar="#toolbar"
+                                       data-pagination="true"
+                                       data-show-pagination-switch="true"
+                                       data-page-size="10"
+                                       data-page-list="[10, 20, 50]"
+                                       data-search="false"
+                                       data-show-refresh="false"
+                                       data-show-toggle="false"
+                                       data-show-columns="true"
+                                       data-show-export="false"
+                                       data-detail-view="false"
+                                       data-mobile-responsive="true"
+                                       data-check-on-init="true"
+                                       data-url="{{ pid }}/api/users/">
+                                    <thead>
+                                        <tr>
+                                            <th data-field="username">User Name</th>
+                                            <th data-field="email">Email</th>
+                                            <th data-field="current_role">Role</th>
+                                            {% if is_owner %}
+                                            <th data-field="scontrol" data-align="center" data-sortable="false" data-events="scontrolEvents" data-formatter="scontrolFormatter">Controls</th>
+                                            {% endif %}
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+</div>
+
+<!-- render render project archive control if a project owner is logged in -->
+<div class="container-fluid">
+    {% if is_owner %}
+        <div class="row">
+            <div class="col-md-12" align="center">
+                    <div>
+                        <h2><span class="label label-default full-width">Archive</span></h2>
+                    </div>
+                </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p>Archive a project to a backup file. If the project is no longer needed it may be deleted (cannot be undone).</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <form class="form-inline pull-left" id="archiveForm">
+                    <button class="btn btn-primary" type="button" onclick="projectArchive()">Archive Project</button>
+                </form>
+                <form class="form-inline pull-left" id="archiveDeleteForm">
+                    <button class="btn btn-danger" type="button" onclick="projectArchiveDelete()">Delete Project</button>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="help-block" id="projectArchiveHelpBlock"></div>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+
+<script>
+var pid = {{ pid }};
+var has_devices = {{ has_devices|lower }};
+var has_ios = {{ has_ios|lower }}
+
+</script>
+
+{% assets "dashboard_js" %}
+<script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+
+{% endblock %}

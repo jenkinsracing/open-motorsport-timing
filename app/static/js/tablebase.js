@@ -1,0 +1,1 @@
+// TODO move modal JS code to here so it is not duplicated for each table view

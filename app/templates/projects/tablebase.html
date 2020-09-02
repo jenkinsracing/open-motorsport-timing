@@ -1,0 +1,42 @@
+{% block body %}
+
+{% block header_content %}
+
+{% endblock %}
+
+{% block table_content %}
+
+{% endblock %}
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-show="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Log entry for X</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control" id="modalInput" placeholder="Message">
+                    <hr>
+                    <div class="ui-front">
+                        <input type="text" class="form-control" id="tokenfield" placeholder="Tags" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="myModalSave" onClick="logSave()" data-dismiss="modal">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+<script src="http://rawgit.com/hhurz/tableExport.jquery.plugin/master/tableExport.js"></script>
+
+{% assets "tablebase_js" %}
+<script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+
+{% endblock %}

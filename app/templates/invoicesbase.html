@@ -1,0 +1,100 @@
+{% macro render_invoice_upcoming(user_upcoming_invoice) %}
+
+    {% if user_upcoming_invoice %}
+    <div class="panel panel-default">
+        <div class="panel-heading">Upcoming Invoice</div>
+        <div class="panel-body">
+            <div><h5 style="text-align:left">The next automatic payment will occur on {{ user_upcoming_invoice.next_payment_attempt_human }}.</h5></div>
+            <table class="table table-condensed table-hover table-responsive">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th style="text-align:right">Amount</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for item in user_upcoming_invoice.lines.data %}
+                    <tr>
+                        <td>{{ item.period_start_human }} to {{ item.period_end_human }}</td>
+                        <td>
+                            {% if item.description %}
+                                {{ item.description }}
+                            {% else %}
+                                {{ item.plan.name }}
+                            {% endif %}
+                        </td>
+                        <td style="text-align:right">{{ "${:,.2f}".format(item.amount/100) }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+            <div><h5 style="text-align:right">Subtotal {{ "${:,.2f}".format(user_upcoming_invoice.subtotal/100) }}</h5></div>
+            <div><h5 style="text-align:right">Total {{ "${:,.2f}".format(user_upcoming_invoice.total/100) }}</h5></div>
+            <div><h5 style="text-align:right"><strong>Amount Due {{ "${:,.2f}".format(user_upcoming_invoice.amount_due/100) }}</strong></h5></div>
+        </div>
+    </div>
+
+    {% else %}
+
+    <div class="well">
+        <div>
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+        </div>
+        <div>There are no upcoming invoices.</div>
+    </div>
+
+    {% endif %}
+
+{% endmacro %}
+
+{% macro render_invoices_table(user_invoices) %}
+
+    {% if user_invoices %}
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Past Invoices</div>
+        <div class="panel-body">
+
+            <table class="table table-condensed table-hover table-responsive">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Number</th>
+                <th>Description</th>
+                <th>Due</th>
+                <th>Paid</th>
+                <th>Remaining</th>
+                <th>PDF</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for invoice in user_invoices %}
+                    <tr>
+
+                        <td>{{ invoice.date_human }}</td>
+                        <td>{{ invoice.number }}</td>
+                        <td>{{ invoice.lines.data[-1].plan.name }}</td>
+                        <td>{{ "${:,.2f}".format(invoice.amount_due/100) }}</td>
+                        <td>{{ "${:,.2f}".format(invoice.amount_paid/100) }}</td>
+                        <td>{{ "${:,.2f}".format(invoice.amount_remaining/100) }}</td>
+                        <td><a href="{{ invoice.invoice_pdf }}"><span class="glyphicon glyphicon-download" aria-hidden="true"></span></a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% else %}
+
+    <div class="well">
+        <div>
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+        </div>
+        <div>There are no past invoices yet.</div>
+    </div>
+
+    {% endif %}
+
+{% endmacro %}

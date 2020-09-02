@@ -1,0 +1,1 @@
+This folder is reserved as temporary storage for projects that users have archived. It must be cleared by server chron job.

@@ -1,0 +1,38 @@
+<!-- display if user isn't subscribed to create projects -->
+{% block body %}
+
+<div class="container-flex">
+    <center>
+        <div class="ext-box">
+            <div class="int-box">
+                <div class="well">
+                    <center>
+                        <div>
+                            <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+                        </div>
+                        {% if is_subscriber %}
+                        <div><b>{{ pname }}</b> no longer has an active subscription and is currently locked. Go to <a href="{{ url_for('main.user') }}">My Account</a> to subscribe.</div>
+                        <hr>
+                        <div>
+                        <form class="form-inline-custom" id="archiveForm">
+                            <button class="btn btn-primary" type="button" onclick="projectArchive()">Archive Project</button>
+                        </form>
+                        <form class="form-inline-custom" id="archiveDeleteForm">
+                            <button class="btn btn-danger" type="button" onclick="projectArchiveDelete()">Delete Project</button>
+                        </form>
+                        </div>
+                        {% else %}
+                        <div><b>{{ pname }}</b> no longer has an active subscription and is currently locked. Contact the project owner.</div>
+                        {% endif %}
+                </center>
+                </div>
+            </div>
+        </div>
+    </center>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script>var pid = {{ pid }};</script>
+{% endblock %}

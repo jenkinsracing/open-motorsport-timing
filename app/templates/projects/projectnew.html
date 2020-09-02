@@ -1,0 +1,142 @@
+<!-- form that creates a new project -->
+{% block body %}
+
+<div class="container-wide">
+  <h1>Add Project</h1>
+    <div class="row">
+
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                        <div class="panel-heading">Create New Project</div>
+                        <div class="panel-body">
+    <form id="newProjectForm" method="POST" action="{{ url_for('.project_new') }}" role="form">
+
+        {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{form.name.label}}
+                {{form.name(placeholder="Project Name", class_="form-control")}}
+            </div>
+            {% if form.name.errors %}
+            <div class="help-block">{{ form.name.errors[0] }}</div>
+            {% endif %}
+            <div class="form-group">
+                {{form.company.label}}
+                {{form.company(placeholder="Company", class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.address.label}}
+                {{form.address(placeholder="Address", class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.city.label}}
+                {{form.city(placeholder="City", class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.state.label}}
+                {{form.state(placeholder="State", class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.zipcode.label}}
+                {{form.zipcode(placeholder="Zip Code", class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.country.label}}
+                {{form.country(placeholder="Country", class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.timezone.label}}
+                {{form.timezone(placeholder="Time Zone", class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.description.label}}
+                {{form.description(placeholder="Description", class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.location.label}}
+                {{form.location(placeholder="Location", class_="form-control")}}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create Project</button>
+    </form>
+            </div>
+            </div>
+            </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                        <div class="panel-heading">Restore Archived Project</div>
+                        <div class="panel-body">
+                            <p>Upload a Commissioning.IO backup file to restore a previous project.</p>
+
+                    <div class="input-group">
+                        <input type="text" class="form-control" readonly> <!-- the visible input field -->
+                        <label class="input-group-btn">
+                            <span class="btn btn-default">Browse&hellip;<input type="file" id="projectFile" style="display: none;"></span> <!-- browse button for hidden input field -->
+                            <button class="btn btn-primary" type="button" onclick="projectRestore('project')">Restore Project</button>
+                        </label>
+                    </div>
+                    <div class="help-block" id="projectHelpBlock"></div>
+</div>
+            </div>
+</div>
+</div>
+</div>
+
+
+{% endblock %}
+
+
+{% block js %}
+<script>
+// example code that lists all selected file in the input box, modify later
+    // We can attach the `fileselect` event to all file inputs on the page
+    $(document).on('change', ':file', function() {
+        var input = $(this),
+        numFiles = input.get(0).files ? input.get(0).files.length : 1,
+        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+        input.trigger('fileselect', [numFiles, label]);
+    });
+
+
+//handle uploading project restore file
+function projectRestore(id){
+    var data = new FormData();
+    var input =  $('#' + id + 'File');
+    var file = input[0].files[0];
+    data.append("file", file);
+
+    $.ajax({
+       url : 'api/' + 'restore/',
+       type : 'POST',
+       data : data,
+       processData: false,  // tell jQuery not to process the data
+       contentType: false,  // tell jQuery not to set contentType
+       success : function(res) {
+            $('#' + id + 'HelpBlock').text(res);  // not an object, plain text response
+           console.log(res);
+
+       },
+       error: function (err, status) {
+            $('#' + id + 'HelpBlock').text(err.responseText);
+            console.log('AJAX post file failed');
+       }
+    });
+    }
+
+
+$(document).ready(function () {
+
+    // control for file selector input fields
+    $(':file').on('fileselect', function(event, numFiles, label) {
+          var input = $(this).parents('.input-group').find(':text'),  // get a reference to the visible text field
+              log = numFiles > 1 ? numFiles + ' files selected' : label;
+
+          if( input.length ) {
+              input.val(log);  // put the file name in the input field
+          }
+      });
+
+});
+
+</script>
+
+{% endblock %}

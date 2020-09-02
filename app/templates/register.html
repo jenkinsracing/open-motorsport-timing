@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Commissioning.IO - Register{% endblock %}
+
+{% block body %}
+<div class="container-narrow">
+  <h1>Register</h1>
+    <br/>
+    <form id="registerForm" method="POST" action="{{ url_for('.register') }}" role="form">
+
+        {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{form.email.label}}
+                {{form.email(placeholder="Email", class_="form-control")}}
+            </div>
+            {% if form.email.errors %}
+            <div class="help-block">{{ form.email.errors[0] }}</div>
+            {% endif %}
+            <div class="form-group">
+                {{form.username.label}}
+                {{form.username(placeholder="Username", class_="form-control")}}
+            </div>
+            {% if form.username.errors %}
+            <div class="help-block">{{ form.username.errors[0] }}</div>
+            {% endif %}
+            <div class="form-group">
+                {{form.firstname.label}}
+                {{form.firstname(placeholder="First Name", class_="form-control")}}
+            </div>
+            {% if form.firstname.errors %}
+            <div class="help-block">{{ form.firstname.errors[0] }}</div>
+            {% endif %}
+            <div class="form-group">
+                {{form.lastname.label}}
+                {{form.lastname(placeholder="Last Name", class_="form-control")}}
+            </div>
+            {% if form.lastname.errors %}
+            <div class="help-block">{{ form.lastname.errors[0] }}</div>
+            {% endif %}
+            <div class="form-group">
+                {{form.jobtitle.label}}
+                {{form.jobtitle(placeholder="Job Title", class_="form-control")}}
+            </div>
+            {% if form.jobtitle.errors %}
+            <div class="help-block">{{ form.jobtitle.errors[0] }}</div>
+            {% endif %}
+            <div class="form-group">
+                {{form.password.label}}
+                {{form.password(placeholder="Password", class_="form-control")}}
+            </div>
+            {% if form.password.errors %}
+            <div class="help-block">{{ form.password.errors[0] }}</div>
+            {% endif %}
+            <div class="form-group">
+                {{form.confirm.label}}
+                {{form.confirm(placeholder="Password (again)", class_="form-control")}}
+            </div>
+            {% if form.confirm.errors %}
+            <div class="help-block">{{ form.confirm.errors[0] }}</div>
+            {% endif %}
+            <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <p>By registering you agree to our <a href="{{ url_for('.terms') }}">Terms</a> and <a href="{{ url_for('.privacy') }}">Privacy Policy</a>. </p>
+    <p><em>Already registered?</em> Click <a href="/login">here</a> to login.</p>
+</div>
+{% endblock %}
